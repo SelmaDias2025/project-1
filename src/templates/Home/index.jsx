@@ -1,27 +1,29 @@
-import './styles.css';
-import { useEffect, useState, useCallback } from 'react';
+import './styles.css'
+import { useEffect, useState, useCallback } from 'react'
 
-import {loadPosts} from '../../utils/load-posts'
-import { Posts } from '../../components/Posts';
-import { Button } from '../../components/Button';
+import { loadPosts } from '../../utils/load-posts'
+import { Posts } from '../../components/Posts'
+import { Button } from '../../components/Button'
 import { TextInput } from '../../components/TextInput'
 
 export const Home = () => {
   const [posts, setPosts] = useState([])
   const [allPosts, setallPosts] = useState([])
   const [page, setPage] = useState(0)
-  const [postsPerPage] = useState(10)
+  const [postsPerPage] = useState(2)
   const [searchValue, setSearchValue] = useState('')
 
   const noMorePosts = page + postsPerPage >= allPosts.length
-  
-  const filteredPosts = !!searchValue ? allPosts.filter(post => {
-    return post.title.toLowerCase().includes(searchValue.toLowerCase())
-  }) : posts
+
+  const filteredPosts = searchValue
+    ? allPosts.filter((post) => {
+        return post.title.toLowerCase().includes(searchValue.toLowerCase())
+      })
+    : posts
 
   const handleLoadPosts = useCallback(async (page, postsPerPage) => {
     const postsAndPhotos = await loadPosts()
-    
+
     setPosts(postsAndPhotos.slice(page, postsPerPage))
     setallPosts(postsAndPhotos)
   }, [])
@@ -29,7 +31,7 @@ export const Home = () => {
   useEffect(() => {
     console.log(new Date().toLocaleString('pt-br'))
     handleLoadPosts(0, postsPerPage)
-  }, [handleLoadPosts, postsPerPage]);
+  }, [handleLoadPosts, postsPerPage])
 
   const loadMorePosts = () => {
     const nextPage = page + postsPerPage
@@ -46,39 +48,28 @@ export const Home = () => {
   }
 
   return (
-    <section className='container'> 
-      <div className='search-container'>
+    <section className="container">
+      <div className="search-container">
         {!!searchValue && (
           <>
-          <h1>Search value: {searchValue}</h1><br></br>
-          </>  
+            <h1>Search value: {searchValue}</h1>
+            <br></br>
+          </>
         )}
 
-        <TextInput searchValue={searchValue} 
-         handleChange={handleChange} />
-
+        <TextInput searchValue={searchValue} handleChange={handleChange} />
       </div>
 
-     {filteredPosts.length > 0 && (
-       <Posts posts={filteredPosts} />
-     )}
+      {filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
 
-     {filteredPosts.length === 0 && (
-       <p>Não existem posts =(</p>
-     )}
-      
-     <div className='button-container'>
-      {!searchValue && (
-        <Button  text='Load more posts'
-        onClick={loadMorePosts}
-        disabled={noMorePosts}
-      />
-      )}
-     </div>
-    </section> 
-  );
- } 
+      {filteredPosts.length === 0 && <p>Não existem posts =(</p>}
 
+      <div className="button-container">
+        {!searchValue && <Button text="Load more posts" onClick={loadMorePosts} disabled={noMorePosts} />}
+      </div>
+    </section>
+  )
+}
 
 export class Home2 {
   state = {
@@ -88,7 +79,7 @@ export class Home2 {
     postsPerPage: 10,
     searchValue: '',
   }
-  
+
   async componentDidMount() {
     await this.loadPosts()
   }
@@ -96,19 +87,14 @@ export class Home2 {
   loadPosts = async () => {
     const { page, postsPerPage } = this.state
     const postsAndPhotos = await loadPosts()
-    this.setState({ 
-      posts: postsAndPhotos.slice(page, postsPerPage), 
-      allPosts: postsAndPhotos, 
+    this.setState({
+      posts: postsAndPhotos.slice(page, postsPerPage),
+      allPosts: postsAndPhotos,
     })
   }
 
   loadMorePosts = () => {
-    const {
-      page,
-      postsPerPage,
-      allPosts,
-      posts
-    } = this.state
+    const { page, postsPerPage, allPosts, posts } = this.state
     const nextPage = page + postsPerPage
     const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
     posts.push(...nextPosts)
@@ -125,45 +111,36 @@ export class Home2 {
     const { posts, page, postsPerPage, allPosts, searchValue } = this.state
     const noMorePosts = page + postsPerPage >= allPosts.length
 
-    const filteredPosts = !!searchValue ? allPosts.filter(post => {
-      return post.title.toLowerCase().includes(searchValue.toLowerCase())
-    }) : posts
+    const filteredPosts = searchValue
+      ? allPosts.filter((post) => {
+          return post.title.toLowerCase().includes(searchValue.toLowerCase())
+        })
+      : posts
 
-      return (
-        <section className='container'> 
-          <div className='search-container'>
-            {!!searchValue && (
-              <>
-              <h1>Search value: {searchValue}</h1><br></br>
-              </>  
-            )}
-
-            <TextInput searchValue={searchValue} 
-             handleChange={this.handleChange} />
-
-          </div>
-
-         {filteredPosts.length > 0 && (
-           <Posts posts={filteredPosts} />
-         )}
-
-         {filteredPosts.length === 0 && (
-           <p>Não existem posts =(</p>
-         )}
-          
-         <div className='button-container'>
-          {!searchValue && (
-            <Button  text='Load more posts'
-            onClick={this.loadMorePosts}
-            disabled={noMorePosts}
-          />
+    return (
+      <section className="container">
+        <div className="search-container">
+          {!!searchValue && (
+            <>
+              <h1>Search value: {searchValue}</h1>
+              <br></br>
+            </>
           )}
-         </div>
-        </section> 
-    );
-  } 
-}
 
+          <TextInput searchValue={searchValue} handleChange={this.handleChange} />
+        </div>
+
+        {filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
+
+        {filteredPosts.length === 0 && <p>Não existem posts =(</p>}
+
+        <div className="button-container">
+          {!searchValue && <Button text="Load more posts" onClick={this.loadMorePosts} disabled={noMorePosts} />}
+        </div>
+      </section>
+    )
+  }
+}
 
 // function App() {
 //   return (
@@ -172,7 +149,7 @@ export class Home2 {
 //         <img src={logo} className="App-logo" alt="logo" />
 //         <p>
 //           Edit <code>src/App.js</code> and save to reload.
-          
+
 //         </p>
 //         <a
 //           className="App-link"
@@ -184,8 +161,6 @@ export class Home2 {
 //         </a>
 //       </header>
 //     </div>
-    
+
 //   );
 // }
-
-
